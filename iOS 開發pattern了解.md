@@ -62,6 +62,8 @@
 還有其他像是 VIPER : View-Interactor-Presenter-Entity-Router
 ![](https://i.imgur.com/SVKhBjD.png)
 
+以及像是 uber 的 RIBs 都是有些微的不一樣
+
 
 
 
