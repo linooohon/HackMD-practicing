@@ -83,11 +83,13 @@ checkLogin(email: "pin@gmail.com", password: "1234")
 function 的結構：
 ![](https://i.imgur.com/OvnaIdt.png)
 
-
->func nameOfFunciton(//parameter) {
-//block of funciton
+```swift
+func nameOfFunciton(//這裡放parameter) {
+//這裡是block of funciton，用來敘述這個 func 的內容，但注意不是執行，唯有 call 時，才會執行敘述
 }
 
+nameOfFunction(parameter) // call，這一行才是使 func 執行的關鍵
+```
 
 - function 的名字也和 var 和 let 一樣，不能重複 
 - 每次 function 都只是敘述，如果要執行 function，必須呼叫，呼叫一次就執行一次
@@ -134,7 +136,7 @@ bakePizza()  // 這裡就是呼叫，而程式在執行時，就會因為這個�
   >after the job / task, give me something back, because I need it for something else
   >在執行完 function 的敘述後，把什麼東西拿回來給我，因為我需要那個東西去做別得事情
 
-- 舉例，假設今天要製造一個小費產生器，大概用 function 的邏輯列一下：
+- 舉例，假設今天要製造一個小費產生器，大概用 function 的邏輯列一下：來看 print 和 return 的基本使用差別，其實 return 就是可以接著用來做其他事， print 就是單純印出
 
 ![](https://i.imgur.com/ZO9cDX3.png)
 
@@ -144,17 +146,21 @@ var personCount = 2
 
 func calculateATip(amount: Double) {
     let tip = amount * 10 / 100   // 假設是給 10% 小費
-    print(tip)
+    print(tip)  //這裡如果只需要印出來的話，就直接 print
 }
 
-calculateATip(amount: 120)
+calculateATip(amount: 120)   // 這句呼叫，才能觸發 func calculateATip
+
+
+// 但如果現在假設要做更多的事情，我們就會用 return，因為 function 一但執行完，值都會消失，
+// 必須給 return，以便於接下來繼續做使用
 
 func calculateATipWithAReturn(amount: Double) -> Double {
     let tip = amount * 20 / 100  // 假設是給 20% 小費
-    return tip
+    return tip    //所以在這裡給了 return
 }
 
-let tip = calculateATipWithAReturn(amount: 120)
+let tip = calculateATipWithAReturn(amount: 120) // 這行很關鍵，我們必須做一樣的事情呼叫
 
 
 func showTipOnLabel(tip: Double) {
@@ -162,4 +168,76 @@ func showTipOnLabel(tip: Double) {
 }
 
 showTipOnLabel(tip: tip)
+```
 
+- ## function 概念補充
+
+1. 例子 
+![](https://i.imgur.com/Rm6R5Is.png)
+```swift
+func message(msg: String) -> Int {
+    print(msg)
+    return msg.count
+}
+
+func secondMessage(msg: String) {
+    message(msg: msg)        // 其實是有 return 8，但因為沒有定義 return值，所以會被忽略掉
+}
+
+message(msg: "I'm good")    // 印出 "I'm good" 並 return 8
+secondMessage(msg: "I'm good")   // 印出 "I'm good"，但這裡不會 return，就是因為上面沒有定義 return值
+
+/*
+這個例子之所以 secondMessage 沒有 return值是因為：
+跑得邏輯是，message(msg: "I'm good") 先 call func message，所以會 print，也有 return值，沒有錯
+但第二個 secondMessage(msg: "I'm good") 去 call func secondMessage 時，block of func 跑得是再 call 一次 func message，
+所以也確實有 print，也確實有 return值，但這都在 block 裡，
+因為 func secondMessage 沒有定義 return值，所以會忽略掉 message(msg: msg) 回傳的值
+*/
+```
+
+2. 可變參數：
+
+```swift
+//參考資料的舉例
+func isNumber(numbers:Int...) -> Int {
+    var total = 0
+    for number in numbers {
+        total += number
+    }
+    return total * numbers.count
+}
+isNumber(numbers: 1, 2, 3, 4, 5)  // return 75  : 全部加起來 * 5(五個數)
+```
+
+3. 如果希望函式裡修改參數的值，則藉由 inout 可以在函式呼叫後，修改的值仍然存在
+
+```swift
+func swapTwoInts(_ a: inout Int, _ b: inout Int) {
+    let temporaryA = a
+    a = b
+    b = temporaryA
+}
+
+var a = 10
+var b = 20
+swapTwoInts(&a, &b)  //這裡要記得加 &
+print(a, b)
+
+// 但要注意這個和 return 是不同的，這裡只是一種方法在 func 外能夠產生效果
+```
+
+4. 默認下，使用參數名字為參數標籤，而如果函式加入參數標籤後，之後可藉由參數標籤呼叫`dance(play:)`，可用在便於理解時使用
+```swift
+func dance(play music: String) {
+    print("Let's get down with \(music)")
+}
+
+dance(play: "Old School Fuck")
+```
+
+- 省略參數標籤的話：要記得下底線
+- 有默認參數的話：要記得沒有默認的參數要放前面
+- 函式也可以有多個回傳值
+- 用 optional 來避免回傳可能是空值而報錯，這樣是空值就會回傳 nil
+>(Int?, Int?) 與 (Int, Int)? 兩者是不同的， (Int, Int)? 是整個元組為可選的，而不僅僅是元組中的單個值。
